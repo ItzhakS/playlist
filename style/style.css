@@ -93,8 +93,27 @@ html, body{
   margin-bottom: 103px;
 }
 
+.addSongsFormContainer{
+  margin-bottom: 15px;
+}
+.addMoreSongs:hover{
+  opacity: .75;
+  cursor: pointer;
+}
+form.addSongs{
+  display: flex;
+  margin-bottom: 10px;
+}
+
+form.addSongs input{
+  margin: 0px 20px 10px 7px;
+}
 .newSongs{
   display: none;
+}
+.songs-btns{
+  display: flex;
+  justify-content: space-between;
 }
 /* ***** */
 
