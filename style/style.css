@@ -118,29 +118,22 @@ form.addSongs input{
 /* ***** */
 
 .mainContent{
-  height: 80vh;
+  height: 70vh;
   width: auto;
   margin: 0 auto;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  
 }
 
-.circle1{
+.albumWrapper{
   height: 231px;
   width: 236px;
   border: 1px solid;
   border-radius: 50%;
+  background-size: 100%;
+  opacity: .85;
 }
-.circle2{
-  height: 231px;
-  width: 236px;
-  border: 1px solid;
-  border-radius: 50%;
-}
-.circle3{
-  height: 231px;
-  width: 236px;
-  border: 1px solid;
-  border-radius: 50%;
+.albumWrapper:hover{
+  opacity: 1;
 }

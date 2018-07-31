@@ -24,8 +24,8 @@ try {
 		}
 	}
 	else {
-		// songs
-		playlist_songs($_GET['id']);			
+			// songs
+			playlist_songs($_GET['id']);
 	}
 }
 catch(PDOException $e) {

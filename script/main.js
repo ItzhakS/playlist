@@ -7,6 +7,20 @@ $(function() {
 
   })
 
+  $.get("api/playlist.php", {type:'playlist'})
+    .done(function(response){
+      $.each(response.data, (key, value)=>{
+        console.log(value.id)
+        let playlist = document.createElement('div');
+        playlist.classList.add('albumWrapper');
+        playlist.style.backgroundImage = `url(${value.image})`
+        playlist.innerHTML = `
+        <h3 class="playlistName">${value.name}</h3>
+        `;
+        $('.mainContent').append(playlist);
+        })
+      })
+
   $('.next-btn').click(()=>{
     event.preventDefault();
     $('.new-PlaylistContainer').hide("fade", 500, ()=>{
@@ -25,12 +39,13 @@ $(function() {
       let songObj = {"url":`${$(this).find('input[name="url"]').val()}`, "name":`${$(this).find('input[name="songName"]').val()}`};
       data.songs.push(songObj);
     })
-    // let getData = {'type': 'playlist'};
-    // $.get('api/playlist.php', getData.serialize());
-    let post = $.post("api/playlist.php", data);
-    post.done(()=>{
-      alert('Posted!!');
-    });
+    $.post("api/playlist.php?type=playlist", data)
+      .done(function(data) {
+        alert(data+'Posted!!');
+      }, 'json')
+      .fail(function(data) {
+        alert("That's an Error! Your playlist was not saved.");
+      });
     $('.new-PlaylistWrapper').dialog('close');
   });
 
