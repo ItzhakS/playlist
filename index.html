@@ -6,6 +6,7 @@
     <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="script/main.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
     <link rel="stylesheet" href="style/style.css">
   </head>
@@ -16,9 +17,47 @@
         <span class="new-Playlist">Add New Playlist</span>
       </div>
       <div class="rightSideWrapper">
-        <input type="search" name="playlist-search" id="">
+        <div class="search-Container">
+          <input type="search" name="playlist-search" class="search-Input" id="" placeholder="Search Playlists">
+          <i class="fas fa-search search-icon"></i>
+        </div>
       </div>
     </header>
+    <div class="new-PlaylistWrapper">
+      <div class="new-PlaylistContainer">
+        <h3>Add New Playlist</h3>
+        <hr>
+        <div class="newPlaylistFormContainer">
+          <form action="" method="post" class="new-Playlist-Form">
+            <label>Playlist Name</label>
+            <input type="text" name="playlistName" id="" required>
+            <label>Playlist Cover Image URL</label>
+            <input type="text" name="image" id="" required>
+            <div class="newPlaylist-btns">
+              <button class="next-btn">Next</button>
+              <button type="reset">Reset Feilds</button>
+            </div>
+          </form>
+          <div class="playlistPreview"></div>
+        </div>
+      </div>
+      <div class="newSongs">
+        <h3>Add Playlist Songs</h3>
+        <hr>
+        <div class="addSongsFormContainer">
+          <form action="" method="post" class="addSongs">
+            <label>Song URL</label>
+            <input type="text" name="url" id="">
+            <label> Name</label>
+            <input type="text" name="songName" id="">
+          </form>
+        </div>
+        <div class="newPlaylist-btns">
+            <span class="addMoreSongs"><i class="fas fa-plus-square"></i>Add another song</span>
+            <button type="" class="submitNewPlaylist">Finish &amp; Save</button>
+        </div>
+      </div>
+    </div>
 		<h1>My Awesome Player</h1>
     <h3>Coming soon...</h3>
     <div class="mainContent">
