@@ -1,5 +1,22 @@
 $(function() {
 
+  /** Get and Display all Playlists ***/
+  $.get("api/playlist.php", {type:'playlist'})
+    .done(function(response){
+      $.each(response.data, (key, value)=>{
+        let playlist = document.createElement('div');
+        playlist.classList.add('albumWrapper');
+        playlist.innerHTML = `
+        <h3 class="playlistName">${value.name}</h3>
+        <img class="albumArtwork" src="${value.image}" alt="Album Artwork">
+        `;
+        $('.mainContent').append(playlist);
+        })
+      })
+
+  /**
+   * Open Dialog for New Playlist
+   */
   $('.new-Playlist-Icon').click(()=>{
     $('.new-PlaylistWrapper').dialog({modal: true, width: 500, title:'Add New Playlist'});
     $('.newSongs').hide();
@@ -7,20 +24,9 @@ $(function() {
 
   })
 
-  $.get("api/playlist.php", {type:'playlist'})
-    .done(function(response){
-      $.each(response.data, (key, value)=>{
-        console.log(value.id)
-        let playlist = document.createElement('div');
-        playlist.classList.add('albumWrapper');
-        playlist.style.backgroundImage = `url(${value.image})`
-        playlist.innerHTML = `
-        <h3 class="playlistName">${value.name}</h3>
-        `;
-        $('.mainContent').append(playlist);
-        })
-      })
-
+  /**
+   * Switch Between Playlist to Songs container 
+   */
   $('.next-btn').click(()=>{
     event.preventDefault();
     $('.new-PlaylistContainer').hide("fade", 500, ()=>{
@@ -29,6 +35,9 @@ $(function() {
     });
   });
 
+  /**
+   * Submit New Playlist
+   */
   $( ".submitNewPlaylist" ).click(()=>{
     event.preventDefault();
     let data ={};
@@ -40,14 +49,29 @@ $(function() {
       data.songs.push(songObj);
     })
     $.post("api/playlist.php?type=playlist", data)
-      .done(function(data) {
-        alert(data+'Posted!!');
-      }, 'json')
+      .done(function(response) {
+        /** onSuccess Append New Playlist*/
+        $.get("api/playlist.php",{type:'playlist', id:`${response.data.id}`})
+          .done(displayNewPlaylist(getResponse))
+      })
       .fail(function(data) {
         alert("That's an Error! Your playlist was not saved.");
       });
     $('.new-PlaylistWrapper').dialog('close');
+    $('input').each(function() {
+      $(this).value = '';
+    })
   });
+
+  function displayNewPlaylist(getResponse){
+    let playlist = document.createElement('div');
+    playlist.classList.add('albumWrapper');
+    playlist.style.backgroundImage = `url(${getResponse.data.image})`
+    playlist.innerHTML = `
+    <h3 class="playlistName">${getResponse.data.name}</h3>
+    `;
+    $('.mainContent').append(playlist);
+  }
 
   $('.addMoreSongs').click(()=>{
     let moreSongInputs = `
