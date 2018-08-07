@@ -4,21 +4,9 @@ $(function() {
   $.get("api/playlist.php", {type:'playlist'})
     .done(function(response){
       $.each(response.data, function(key,value){
-      let playlistContainer = document.createElement('div');
-      let playlist = document.createElement('div');
-      let albumTitle = document.createElement('div');
-      playlistContainer.classList.add('albumContainer');
-      playlist.classList.add('albumWrapper');
-      albumTitle.classList.add('playlistName');
-      albumTitle.textContent = value.name;
-      $('.playlistName').arctext({radius: 120});
-      playlist.style.backgroundImage = `url(${value.image})`;
-      playlist.append(albumTitle);
-      playlistContainer.append(playlist);
-      $('.mainContent').append(playlistContainer);
+        displayPlaylist(value);
     })
     $('.playlistName').arctext({radius: 120});
-    
       })
       .fail(()=>{
         $('.mainContent').innerHtml=`
@@ -63,7 +51,7 @@ $(function() {
       .done(function(response) {
         /** onSuccess Append New Playlist*/
         $.get("api/playlist.php",{type:'playlist', id:`${response.data.id}`})
-          .done(displayNewPlaylist(getResponse.data))
+          .done(displayPlaylist(getResponse.data))
       })
       .fail(function(data) {
         alert("That's an Error! Your playlist was not saved.");
@@ -85,19 +73,33 @@ $(function() {
     $('.addSongsFormContainer').append(moreSongInputs);
   })
 
-  function displayNewPlaylist(getResponse){
+  function displayPlaylist(getResponse){
     let playlistContainer = document.createElement('div');
     let playlist = document.createElement('div');
     let albumTitle = document.createElement('div');
+    let editBtn = document.createElement('span');
+    let deleteBtn = document.createElement('span');
+    let playBtn = document.createElement('div');
+
+    deleteBtn.classList.add('deleteBtn')
+    deleteBtn.innerHTML = `<i class="fas fa-times"></i>`;
+    editBtn.classList.add('editBtn')
+    editBtn.innerHTML = `<i class="fas fa-pencil-alt"></i>`;
+    playBtn.classList.add('playBtn')
+    playBtn.innerHTML = `<i class="far fa-play-circle"></i>`;
+
     playlistContainer.classList.add('albumContainer');
     playlist.classList.add('albumWrapper');
     albumTitle.classList.add('playlistName');
     albumTitle.textContent = getResponse.name;
     $('.playlistName').arctext({radius: 120});
     playlist.style.backgroundImage = `url(${getResponse.image})`;
-    playlist.append(albumTitle);
+    playlist.append(albumTitle, deleteBtn, editBtn, playBtn);
     playlistContainer.append(playlist);
     $('.mainContent').append(playlistContainer);
+    $('.deleteBtn').click((e)=>{deletePlaylist(e)});
+    $('.editBtn').click();
+    $('.playBtn').click(activatePlaylist(e));
   }
 
   function deletePlaylist(e) {

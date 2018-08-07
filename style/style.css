@@ -60,7 +60,6 @@ html, body{
 
 /* Add playlist */
 
-
 .new-PlaylistWrapper{
   display: none;
 }
@@ -121,6 +120,7 @@ form.addSongs input{
   height: 70vh;
   width: auto;
   margin: 0 auto;
+  margin-top: 30px;
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   
@@ -143,4 +143,33 @@ form.addSongs input{
 
 .playlistName{
   text-align: center;
+  font-family: monospace;
+  font-weight: 600;
+}
+
+.editBtn{
+  display: none;
+  font-size: 1.2em;
+  cursor: pointer;
+}
+.deleteBtn{
+  display: none;
+  font-size: 1.45em;
+  margin-left: 39%;
+  margin-right: 15px; 
+  cursor: pointer;
+}
+.playBtn{
+  display: none;
+  font-size: 2.5em;
+  position: relative;
+  top: 21%;
+  left: 42%;
+  cursor: pointer;
+}
+.albumWrapper:hover .editBtn, .albumWrapper:hover .deleteBtn{
+  display: inline;
+}
+.albumWrapper:hover .playBtn{
+  display: block;
 }
