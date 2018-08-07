@@ -126,6 +126,9 @@ form.addSongs input{
   
 }
 
+/*
+** Album Playlists
+*/
 .albumWrapper{
   height: 231px;
   width: 236px;
@@ -136,4 +139,8 @@ form.addSongs input{
 }
 .albumWrapper:hover{
   opacity: 1;
+}
+
+.playlistName{
+  text-align: center;
 }

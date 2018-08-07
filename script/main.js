@@ -3,15 +3,26 @@ $(function() {
   /** Get and Display all Playlists ***/
   $.get("api/playlist.php", {type:'playlist'})
     .done(function(response){
-      $.each(response.data, (key, value)=>{
-        let playlist = document.createElement('div');
-        playlist.classList.add('albumWrapper');
-        playlist.innerHTML = `
-        <h3 class="playlistName">${value.name}</h3>
-        <img class="albumArtwork" src="${value.image}" alt="Album Artwork">
-        `;
-        $('.mainContent').append(playlist);
-        })
+      $.each(response.data, function(key,value){
+      let playlistContainer = document.createElement('div');
+      let playlist = document.createElement('div');
+      let albumTitle = document.createElement('div');
+      playlistContainer.classList.add('albumContainer');
+      playlist.classList.add('albumWrapper');
+      albumTitle.classList.add('playlistName');
+      albumTitle.textContent = value.name;
+      $('.playlistName').arctext({radius: 120});
+      playlist.style.backgroundImage = `url(${value.image})`;
+      playlist.append(albumTitle);
+      playlistContainer.append(playlist);
+      $('.mainContent').append(playlistContainer);
+    })
+    $('.playlistName').arctext({radius: 120});
+    
+      })
+      .fail(()=>{
+        $('.mainContent').innerHtml=`
+        <h2>No Playists</h2>`;
       })
 
   /**
@@ -52,7 +63,7 @@ $(function() {
       .done(function(response) {
         /** onSuccess Append New Playlist*/
         $.get("api/playlist.php",{type:'playlist', id:`${response.data.id}`})
-          .done(displayNewPlaylist(getResponse))
+          .done(displayNewPlaylist(getResponse.data))
       })
       .fail(function(data) {
         alert("That's an Error! Your playlist was not saved.");
@@ -62,16 +73,6 @@ $(function() {
       $(this).value = '';
     })
   });
-
-  function displayNewPlaylist(getResponse){
-    let playlist = document.createElement('div');
-    playlist.classList.add('albumWrapper');
-    playlist.style.backgroundImage = `url(${getResponse.data.image})`
-    playlist.innerHTML = `
-    <h3 class="playlistName">${getResponse.data.name}</h3>
-    `;
-    $('.mainContent').append(playlist);
-  }
 
   $('.addMoreSongs').click(()=>{
     let moreSongInputs = `
@@ -83,6 +84,28 @@ $(function() {
       </form>`;
     $('.addSongsFormContainer').append(moreSongInputs);
   })
+
+  function displayNewPlaylist(getResponse){
+    let playlistContainer = document.createElement('div');
+    let playlist = document.createElement('div');
+    let albumTitle = document.createElement('div');
+    playlistContainer.classList.add('albumContainer');
+    playlist.classList.add('albumWrapper');
+    albumTitle.classList.add('playlistName');
+    albumTitle.textContent = getResponse.name;
+    $('.playlistName').arctext({radius: 120});
+    playlist.style.backgroundImage = `url(${getResponse.image})`;
+    playlist.append(albumTitle);
+    playlistContainer.append(playlist);
+    $('.mainContent').append(playlistContainer);
+  }
+
+  function deletePlaylist(e) {
+    $.ajax({
+      method: "DELETE",
+      url:`api/playlist/${id}`})      
+    
+  }
 
 
 
