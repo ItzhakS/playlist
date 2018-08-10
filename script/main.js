@@ -1,17 +1,20 @@
 $(function() {
 
   /** Get and Display all Playlists ***/
-  $.get("api/playlist.php", {type:'playlist'})
-    .done(function(response){
-      $.each(response.data, function(key,value){
-        displayPlaylist(value);
-    })
-    $('.playlistName').arctext({radius: 120});
+  function displayAllPlaylists() {
+    $.get("api/playlist.php", {type:'playlist'})
+      .done(function(response){
+        $.each(response.data, function(key,value){
+          displayPlaylist(value);
       })
-      .fail(()=>{
-        $('.mainContent').innerHtml=`
-        <h2>No Playists</h2>`;
-      })
+      $('.playlistName').arctext({radius: 110});
+        })
+        .fail(()=>{
+          $('.mainContent').innerHtml=`
+          <h2>No Playists</h2>`;
+        })
+  }
+  displayAllPlaylists();
 
   /**
    * Open Dialog for New Playlist
@@ -39,28 +42,13 @@ $(function() {
    */
   $( ".submitNewPlaylist" ).click(()=>{
     event.preventDefault();
-    let data ={};
-    data.name = $('input[name="playlistName"]').val();
-    data.image = $('input[name="image"]').val();
-    data.songs = [];
-    $('.addSongs').each(function() {
-      let songObj = {"url":`${$(this).find('input[name="url"]').val()}`, "name":`${$(this).find('input[name="songName"]').val()}`};
-      data.songs.push(songObj);
-    })
-    $.post("api/playlist.php?type=playlist", data)
-      .done(function(response) {
-        /** onSuccess Append New Playlist*/
-        $.get("api/playlist.php",{type:'playlist', id:`${response.data.id}`})
-          .done(displayPlaylist(getResponse.data))
-      })
-      .fail(function(data) {
-        alert("That's an Error! Your playlist was not saved.");
-      });
-    $('.new-PlaylistWrapper').dialog('close');
-    $('input').each(function() {
-      $(this).value = '';
-    })
+    submitPlaylist();
   });
+    // $('.new-PlaylistWrapper').dialog('close');
+    // $('input').each(function() {
+    //   $(this).value = '';
+    // })
+  // });
 
   $('.addMoreSongs').click(()=>{
     let moreSongInputs = `
@@ -72,6 +60,33 @@ $(function() {
       </form>`;
     $('.addSongsFormContainer').append(moreSongInputs);
   })
+
+  function submitPlaylist(e) {
+    let data = {};
+    data.name = $('input[name="playlistName"]').val();
+    data.image = $('input[name="image"]').val();
+    // return data;
+    if(e){
+      $.post(`api/playlist/${e.currentTarget.parentElement.id}`, data)
+    }
+    else {
+      data.songs = [];
+      $('.addSongs').each(function () {
+        let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
+        data.songs.push(songObj);
+      })
+      $.post("api/playlist", data)
+        .done(function (response) {
+          /** onSuccess Append New Playlist*/
+          $.get(`api/playlist/${response.data.id}`)
+            .done(displayPlaylist(response.data))
+        })
+        .fail(function (data) {
+          alert("That's an Error! Your playlist was not saved.");
+        }
+      );
+    }
+  }
 
   function displayPlaylist(getResponse){
     let playlistContainer = document.createElement('div');
@@ -88,28 +103,77 @@ $(function() {
     playBtn.classList.add('playBtn')
     playBtn.innerHTML = `<i class="far fa-play-circle"></i>`;
 
-    playlistContainer.classList.add('albumContainer');
+    playlistContainer.classList.add(`albumContainer${getResponse.id}`);
     playlist.classList.add('albumWrapper');
+    playlist.id = getResponse.id;
     albumTitle.classList.add('playlistName');
     albumTitle.textContent = getResponse.name;
-    $('.playlistName').arctext({radius: 120});
+    $('.playlistName').arctext({radius: 110});
     playlist.style.backgroundImage = `url(${getResponse.image})`;
     playlist.append(albumTitle, deleteBtn, editBtn, playBtn);
     playlistContainer.append(playlist);
     $('.mainContent').append(playlistContainer);
     $('.deleteBtn').click((e)=>{deletePlaylist(e)});
-    $('.editBtn').click();
-    $('.playBtn').click(activatePlaylist(e));
+    $('.editBtn').click((e)=>{updatePlaylist(e)});
+    $('.playBtn').click((e)=>{activatePlaylist(e)});
   }
 
   function deletePlaylist(e) {
-    $.ajax({
-      method: "DELETE",
-      url:`api/playlist/${id}`})      
+    let ID = e.currentTarget.parentElement.id;
+    $('.dialogBox').dialog({modal: true, width: 300, title:"Are You Sure?", 
+          buttons: [{
+            text: "Yes",
+            click: function() {
+              $.ajax({
+                method: "DELETE",
+                url:`api/playlist/${ID}`})
+                .done(function(){
+                  $('.dialogBox').dialog({show: 300,modal: true, width: 300, title:`${e.currentTarget.previousElementSibling.innerText} Playlist Deleted`,
+                    buttons: [{
+                      text: "OK",
+                      click: function() {
+                        $('.dialogBox').dialog( "close" )
+                      }}]
+                    })
+                    $(`.albumContainer${ID}`).remove();
+                });
+            $('.dialogBox').dialog( "close" );
+          }
+          },
+          {
+            text: "Cancel",
+            click: function(){
+              $('.dialogBox').dialog( "close" );
+            }
+          }]
+        }); 
     
   }
 
+  function updatePlaylist(e) {
+    submitPlaylist(e);
 
+    $.ajax({
+      url: '/playlist/api/playlist/1',
+      type: 'POST',
+      data:{image:"Docs/dvd-image.png"},
+      success: function(result) {
+          console.log("Success");
+      }
+    });
+  }
+
+  function updateSongs(id) {
+    data.songs = [];
+      $('.addSongs').each(function () {
+        let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
+        data.songs.push(songObj);
+      })
+  }
+
+  function activatePlaylist(e) {
+    
+  }
 
 
 
