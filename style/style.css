@@ -114,6 +114,12 @@ form.addSongs input{
   display: flex;
   justify-content: space-between;
 }
+.updateInfoBtn{
+  display: none;
+}
+.updateSongsBtn{
+  display: none;
+}
 /* ***** */
 
 .mainContent{
@@ -144,19 +150,23 @@ form.addSongs input{
 .playlistName{
   text-align: center;
   font-family: monospace;
-  font-weight: 600;
+  font-weight: 900;
+  font-size: 1.2em;
+  position: relative;
+  bottom: 16px;
 }
 
 .editBtn{
   display: none;
-  font-size: 1.2em;
+  font-size: 1.1em;
   cursor: pointer;
+  position: relative;
 }
 .deleteBtn{
   display: none;
   font-size: 1.45em;
   margin-left: 39%;
-  margin-right: 15px; 
+  margin-right: 25px; 
   cursor: pointer;
 }
 .playBtn{
