@@ -20,11 +20,25 @@ $(function() {
    * Open Dialog for New Playlist
    */
   $('.new-Playlist-Icon').click(()=>{
-    $('.new-PlaylistWrapper').dialog({modal: true, width: 500, title:'Add New Playlist'});
+    $('.updateInfoBtn').css('display','none')
+    $('.next-btn').css('display','inline')
+
+    $('input[name="playlistName"]').val('');
+    $('input[name="image"]').val('');
+    
+    if($('.addSongsFormContainer').is(':empty')) addSongInputs();
+    else{
+      $('.addSongs').each(function () {
+        $(this).find('input[name="url"]').val("");
+        $(this).find('input[name="songName"]').val("");
+    });
+  }
+      
+    $('.new-PlaylistWrapper').dialog({show: 400,modal: true, width: 500, title:'Add New Playlist'});
     $('.newSongs').hide();
     $('.new-PlaylistContainer').show();
 
-  })
+  });
 
   /**
    * Switch Between Playlist to Songs container 
@@ -50,7 +64,7 @@ $(function() {
     // })
   // });
 
-  $('.addMoreSongs').click(()=>{
+  function addSongInputs() {
     let moreSongInputs = `
       <form action="" method="post" class="addSongs">
         <label>Song URL:</label>
@@ -59,30 +73,45 @@ $(function() {
         <input type="text" name="songName" id="">
       </form>`;
     $('.addSongsFormContainer').append(moreSongInputs);
+  }
+
+  $('.addMoreSongs').click(()=>{
+    addSongInputs();
   })
 
-  function submitPlaylist(e) {
+  function submitPlaylist(id = null) {
     let data = {};
     data.name = $('input[name="playlistName"]').val();
     data.image = $('input[name="image"]').val();
-    // return data;
-    if(e){
-      $.post(`api/playlist/${e.currentTarget.parentElement.id}`, data)
-    }
-    else {
+
+    /**Update Playlist */
+    if(id){
+      $.post(`api/playlist/${id}`, data)
+        .done(function () {
+          $('.addSongsFormContainer').empty()
+        })
+        .fail(function (data) {
+          alert("That's an Error! Something went wrong...");
+        }
+      );
+
+      /**New Playlist */
+    } else {
       data.songs = [];
       $('.addSongs').each(function () {
         let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
         data.songs.push(songObj);
       })
-      $.post("api/playlist", data)
+      $.post("api/playlist/", data)
         .done(function (response) {
+          $('.addSongsFormContainer').empty();
           /** onSuccess Append New Playlist*/
           $.get(`api/playlist/${response.data.id}`)
             .done(displayPlaylist(response.data))
         })
         .fail(function (data) {
-          alert("That's an Error! Your playlist was not saved.");
+          console.log(data);
+          alert("That's an Error! Something went wrong...");
         }
       );
     }
@@ -120,7 +149,7 @@ $(function() {
 
   function deletePlaylist(e) {
     let ID = e.currentTarget.parentElement.id;
-    $('.dialogBox').dialog({modal: true, width: 300, title:"Are You Sure?", 
+    $('.dialogBox').dialog({show: 400, modal: true, width: 300, title:"Are You Sure?", 
           buttons: [{
             text: "Yes",
             click: function() {
@@ -151,25 +180,59 @@ $(function() {
   }
 
   function updatePlaylist(e) {
-    submitPlaylist(e);
+    let id = e.currentTarget.parentElement.id;
+    let name = e.currentTarget.previousElementSibling.previousElementSibling.innerText;
+    $.get(`api/playlist/${id}`)
+    .done((response)=>{
+      $('input[name="playlistName"]').val(name);
+      $('input[name="image"]').val(response.data.image);
+      $('.new-PlaylistWrapper').dialog({width: 600, title:`Update ${name} Playlist`});
+      $('.next-btn').css('display','none')
+      $('.updateInfoBtn').css('display','inline-block')
+      $('.updateInfoBtn').click(()=>{
+        event.preventDefault();
+        submitPlaylist(id);
 
-    $.ajax({
-      url: '/playlist/api/playlist/1',
-      type: 'POST',
-      data:{image:"Docs/dvd-image.png"},
-      success: function(result) {
-          console.log("Success");
-      }
-    });
-  }
-
-  function updateSongs(id) {
-    data.songs = [];
-      $('.addSongs').each(function () {
-        let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
-        data.songs.push(songObj);
+        displayUpdateSongs(id, name);
+        
+        });
       })
   }
+
+  function displayUpdateSongs(id, name) {
+    $('.addSongsFormContainer').empty();
+        $.get(`api/playlist/${id}/songs`)
+          .done(function(response){
+            let songs = response.data.songs;
+            songs.forEach(function(song) {
+              console.log('Hello');
+              addSongInputs();
+              $('input[name="url"]').val(song.url); $('input[name="songName"]').val(song.name);
+            })
+    
+            /**Show Playlist Songs Form */
+            $('.submitNewPlaylist').css('display','none')
+            $('.updateSongsBtn').css('display','inline')
+            $('.new-PlaylistContainer').hide("fade", 500, ()=>{
+              $('.new-PlaylistWrapper').dialog({width: 600, title:`Update ${name} Playlist Songs`});
+              $('.newSongs').show("fade", 500);
+              });
+
+            $('.updateSongsBtn').click(() => {
+              let songs = [];
+              $('.addSongs').each(function () {
+                let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
+                songs.push(songObj);
+              })
+              $.post(`api/playlist/${id}/songs`)
+                .done(()=>{
+                  $('.new-PlaylistWrapper').dialog('close');
+                })
+            });
+          })
+  }
+
+  
 
   function activatePlaylist(e) {
     
