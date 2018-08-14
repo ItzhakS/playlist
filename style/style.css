@@ -10,6 +10,7 @@ html, body{
 * Header Styles
 */
 .header-Nav{
+  position: fixed;
   height: 75px;
   width: 100%;
   display: flex;
