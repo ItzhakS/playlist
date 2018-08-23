@@ -11,6 +11,7 @@ html, body{
 */
 .header-Nav{
   position: fixed;
+  top: 0;
   height: 75px;
   width: 100%;
   display: flex;
@@ -124,15 +125,30 @@ form.addSongs input{
 /* ***** */
 
 .mainContent{
-  height: 70vh;
+  /* height: 70vh; */
   width: auto;
-  margin: 0 auto;
-  margin-top: 30px;
+  /* margin: 0 auto; */
+  margin-top: 120px;
   display: grid;
+  row-gap: 20px;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   
 }
 
+/* Active Playlist*/
+.activePlaylistWrapper{
+  display: none;
+  padding: 15px;
+  width: 82vh;
+  border-radius: 500px;
+  background-color: darkcyan;
+  margin: 0 auto;
+  margin-top: 135px;
+}
+
+.audioContainer{
+
+}
 /*
 ** Album Playlists
 */
