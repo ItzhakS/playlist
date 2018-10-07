@@ -95,7 +95,7 @@ $(function() {
     if(id){
       $.post(`api/playlist/${id}`, data)
         .done(function () {
-          $('.addSongsFormContainer').empty()
+          $('.addSongsFormContainer').empty();
         })
         .fail(function (data) {
           alert("That's an Error! Something went wrong...");
@@ -114,7 +114,10 @@ $(function() {
           $('.addSongsFormContainer').empty();
           /** onSuccess Append New Playlist*/
           $.get(`api/playlist/${response.data.id}`)
-            .done((response)=>{displayPlaylist(response.data)})
+            .done((response)=>{
+              $('.new-PlaylistWrapper').dialog('close');
+              displayPlaylist(response.data);
+            })
         })
         .fail(function (data) {
           console.log(data);
@@ -189,12 +192,15 @@ $(function() {
     let name = e.currentTarget.previousElementSibling.previousElementSibling.innerText;
     $.get(`api/playlist/${id}`)
       .done((response)=>{
+        $('.addSongsFormContainer').empty();
+        $('.newSongs').hide();
         $('input[name="playlistName"]').val(name);
         $('input[name="image"]').val(response.data.image);
+        $('.new-PlaylistContainer').show()
         $('.new-PlaylistWrapper').dialog({width: 600, modal: true, title:`Update ${name} Playlist`});
         $('.next-btn').css('display','none')
         $('.updateInfoBtn').css('display','inline-block')
-        $('.updateInfoBtn').click(function(){
+        $('.updateInfoBtn').unbind().click(function(){
           event.preventDefault();
           submitPlaylist(id);
 
@@ -210,10 +216,11 @@ $(function() {
           .done(function(response){
             let songs = response.data.songs;
             console.log(songs);
-            songs.forEach(function(song) {
+            songs.forEach(function(song, i) {
               console.log(song);
               addSongInputs();
-              $('input[name="url"]').val(song.url); $('input[name="songName"]').val(song.name);
+              console.log($('input[name="url"]'));
+              $('input[name="url"]')[i].value =song.url; $('input[name="songName"]')[i].value = song.name;
             })
     
             /**Show Playlist Songs Form */
@@ -231,40 +238,61 @@ $(function() {
                 let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
                 songs.push(songObj);
               })
-              $.post(`api/playlist/${id}/songs`, songs)
+              let data = {'songs':songs};
+              $.post(`api/playlist/${id}/songs`, data)
                 .done(()=>{
                   $('.new-PlaylistWrapper').dialog('close');
                   $('.addSongsFormContainer').empty();
+                  $('.mainContent').empty();
+                  displayAllPlaylists();
                 })
             });
           })
   }
 
-  
-
   function activatePlaylist(e) {
     $('source').attr("src", '');
     $('.songList').empty();
+    $('.songList').append("<ol></ol>");
     $('.activeImage').css('backgroundImage', `${e.currentTarget.parentElement.style.backgroundImage}`);
     $('.activePlaylistWrapper').css('display', 'flex');
     $('.activePlaylistWrapper').show('fade', 300);
+    // $('audio').empty();
     let audio = $('audio').attr('preload','auto');
     
     $.get(`api/playlist/${e.currentTarget.parentElement.id}/songs`)
       .done((response)=>{
+        let counter = 1;
         songs = response.data.songs;
+        // songs.forEach((song)=>{
+          //   let source = document.createElement('source');
+          //   let src = document.createAttribute('src');
+          //   src.value = `${song.url}`;
+          //   source.setAttributeNode(src);
+          //   audio.append(source)
+          // })
         $('source').attr("src", songs[0].url);
         audio[0].pause();
         audio[0].load();
-   
         audio[0].oncanplaythrough = audio[0].play();
+        audio[0].addEventListener('ended', () => {
+          console.log('endede!');
+          console.log(songs[counter].url);
+          if(!songs[counter].url) audio[0].firstElementChild.src = songs[0].url;          
+          else {
+            audio[0].firstElementChild.src = songs[counter].url;
+            console.log('New Song');
+            audio[0].load();
+            audio[0].oncanplaythrough = audio[0].play();
+            counter++;
+            console.log(counter);
+          }
+        })
         songs.forEach(function(song) {
-          $('.songList').append(`<p>${song.name}</p>`)
+          $('.songList ol').append(`<li>${song.name}</li>`)
           
         })
-
       })
-
   }
 
 
