@@ -200,3 +200,11 @@ form.addSongs input{
 .albumWrapper:hover .playBtn{
   display: block;
 }
+
+ol li{
+  list-style: none;
+}
+
+span.songName{
+  margin-left: 10px;
+}

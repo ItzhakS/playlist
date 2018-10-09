@@ -80,6 +80,7 @@ $(function() {
         <input type="text" name="songName" id="">
       </form>`;
     $('.addSongsFormContainer').append(moreSongInputs);
+    console.log('appemededdd!!!!!!')
   }
 
   $('.addMoreSongs').click(()=>{
@@ -95,7 +96,6 @@ $(function() {
     if(id){
       $.post(`api/playlist/${id}`, data)
         .done(function () {
-          $('.addSongsFormContainer').empty();
         })
         .fail(function (data) {
           alert("That's an Error! Something went wrong...");
@@ -112,6 +112,7 @@ $(function() {
       $.post("api/playlist", data)
         .done(function (response) {
           $('.addSongsFormContainer').empty();
+          console.log('empty songs form')
           /** onSuccess Append New Playlist*/
           $.get(`api/playlist/${response.data.id}`)
             .done((response)=>{
@@ -193,6 +194,7 @@ $(function() {
     $.get(`api/playlist/${id}`)
       .done((response)=>{
         $('.addSongsFormContainer').empty();
+        console.log('empty songs form')
         $('.newSongs').hide();
         $('input[name="playlistName"]').val(name);
         $('input[name="image"]').val(response.data.image);
@@ -212,6 +214,8 @@ $(function() {
 
   function displayUpdateSongs(id, name) {
     $('.addSongsFormContainer').empty();
+    console.log('empty songs form')
+
         $.get(`api/playlist/${id}/songs`)
           .done(function(response){
             let songs = response.data.songs;
@@ -238,11 +242,12 @@ $(function() {
                 let songObj = { "url": `${$(this).find('input[name="url"]').val()}`, "name": `${$(this).find('input[name="songName"]').val()}` };
                 songs.push(songObj);
               })
-              let data = {'songs':songs};
+              let data = {'songs': songs};
               $.post(`api/playlist/${id}/songs`, data)
                 .done(()=>{
                   $('.new-PlaylistWrapper').dialog('close');
                   $('.addSongsFormContainer').empty();
+                  console.log('empty songs form');
                   $('.mainContent').empty();
                   displayAllPlaylists();
                 })
@@ -277,20 +282,28 @@ $(function() {
         audio[0].oncanplaythrough = audio[0].play();
         audio[0].addEventListener('ended', () => {
           console.log('endede!');
-          console.log(songs[counter].url);
-          if(!songs[counter].url) audio[0].firstElementChild.src = songs[0].url;          
-          else {
+          console.log(counter == songs.length);
+          if(counter == songs.length){
+            audio[0].firstElementChild.src = songs[0].url;
+            let playBtn = $('.fa-play');
+            playBtn.hide();
+            $(`span.song0`).append('<i class="fa fa-play fa-1"></i>');
+            audio[0].load();
+            audio[0].oncanplaythrough = audio[0].play();
+          } else {
             audio[0].firstElementChild.src = songs[counter].url;
-            console.log('New Song');
+            let playBtn = $('.fa-play');
+            playBtn.hide();
+            $(`span.song${counter}`).append('<i class="fa fa-play fa-1"></i>');
             audio[0].load();
             audio[0].oncanplaythrough = audio[0].play();
             counter++;
             console.log(counter);
           }
         })
-        songs.forEach(function(song) {
-          $('.songList ol').append(`<li>${song.name}</li>`)
-          
+        songs.forEach(function(song, i) {
+          if (i<1) $('.songList ol').append(`<li class="song${i}"><span class="song${i}"><i class="fa fa-play fa-1"></i></span><span class="songName">${song.name}</span></li>`);
+          else $('.songList ol').append(`<li class="song${i}"><span class="song${i}"></span><span class="songName">${song.name}</span></li>`);   
         })
       })
   }
