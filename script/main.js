@@ -1,10 +1,33 @@
 $(function() {
 
+
+  // let songsSearchArray = [];
+
+  $('input.search-Input').keyup(search);
+  function search(){
+    let input = $('input.search-Input').val().toLowerCase();
+    let playlists = $('.playlistName').toArray();
+    console.log(input, playlists);
+
+    playlists.forEach((playlist)=>{
+      let text = playlist.innerText;
+      console.log(playlist, text);
+      if(text.toLowerCase().indexOf(input) == -1){
+        playlist.parentElement.parentElement.style.display = 'none';
+      }
+      else{
+        playlist.parentElement.parentElement.style.display = '';
+      }
+    })
+    
+  }
+
   /** Get and Display all Playlists ***/
   function displayAllPlaylists() {
     $.get("api/playlist")
       .done(function(response){
         $.each(response.data, function(key,value){
+          // songsSearchArray.push(value.name);
           displayPlaylist(value);
       })
       $('.playlistName').arctext({radius: 120});
@@ -118,6 +141,7 @@ $(function() {
             .done((response)=>{
               $('.new-PlaylistWrapper').dialog('close');
               displayPlaylist(response.data);
+              addEventHandlers();
             })
         })
         .fail(function (data) {
@@ -164,8 +188,8 @@ $(function() {
               $.ajax({
                 method: "DELETE",
                 url:`api/playlist/${ID}`})
-                .done(function(){
-                  $('.dialogBox').dialog({show: 300,modal: true, width: 300, title:`${e.currentTarget.previousElementSibling.innerText} Playlist Deleted`,
+                .done(function(res){
+                  $('.dialogBox').dialog({show: 300,modal: true, width: 300, title:`Playlist Deleted`,
                     buttons: [{
                       text: "OK",
                       click: function() {
@@ -173,6 +197,9 @@ $(function() {
                       }}]
                     })
                     $(`.albumContainer${ID}`).remove();
+                    if($('.activePlaylistBtns').attr('id') == ID){
+                      closeActivePlaylist();
+                    }
                 });
             $('.dialogBox').dialog( "close" );
           }
@@ -187,19 +214,23 @@ $(function() {
         }); 
   }
 
+  function closeActivePlaylist(){
+    $('.activePlaylistWrapper').hide();
+  }
+
   function updatePlaylist(e) {
     event.stopPropagation();
     let id = e.currentTarget.parentElement.id;
-    let name = e.currentTarget.previousElementSibling.previousElementSibling.innerText;
+    // let name = e.currentTarget.previousElementSibling.previousElementSibling.innerText;
     $.get(`api/playlist/${id}`)
       .done((response)=>{
         $('.addSongsFormContainer').empty();
-        console.log('empty songs form')
+        console.log('empty songs form', response)
         $('.newSongs').hide();
-        $('input[name="playlistName"]').val(name);
+        $('input[name="playlistName"]').val(response.data.name);
         $('input[name="image"]').val(response.data.image);
         $('.new-PlaylistContainer').show()
-        $('.new-PlaylistWrapper').dialog({width: 600, modal: true, title:`Update ${name} Playlist`});
+        $('.new-PlaylistWrapper').dialog({width: 600, modal: true, title:`Update ${response.data.name} Playlist`});
         $('.next-btn').css('display','none')
         $('.updateInfoBtn').css('display','inline-block')
         $('.updateInfoBtn').unbind().click(function(){
@@ -262,6 +293,7 @@ $(function() {
     $('.activeImage').css('backgroundImage', `${e.currentTarget.parentElement.style.backgroundImage}`);
     $('.activePlaylistWrapper').css('display', 'flex');
     $('.activePlaylistWrapper').show('fade', 300);
+    $('.activePlaylistBtns').attr('id', e.currentTarget.parentElement.id );
     // $('audio').empty();
     let audio = $('audio').attr('preload','auto');
     
@@ -269,6 +301,7 @@ $(function() {
       .done((response)=>{
         let counter = 1;
         songs = response.data.songs;
+        
         // songs.forEach((song)=>{
           //   let source = document.createElement('source');
           //   let src = document.createAttribute('src');
@@ -307,6 +340,9 @@ $(function() {
         })
       })
   }
+
+  $('.activePlaylistDelete').click((e)=>{deletePlaylist(e)})
+  $('.activePlaylistUpdate').click((e)=>{updatePlaylist(e); console.log('HERERERERERER');})
 
 
 

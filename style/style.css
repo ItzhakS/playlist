@@ -3,6 +3,7 @@ html, body{
   width: 100%;
   padding: 0%;
   margin: 0;
+  overflow: hidden;
 }
 
 
@@ -19,7 +20,8 @@ html, body{
   justify-content: space-between;
   padding: 18px 26px;
   box-sizing: border-box;
-  background-color: rgba(0,0,0,.05);
+  background-color: #ccc;
+  z-index: 1;
 }
 
 .leftSideWrapper{
@@ -57,6 +59,10 @@ html, body{
 }
 .search-Container:hover> .search-icon{
   opacity: .75;
+}
+
+input[type="search"]::-webkit-search-cancel-button{
+  display: none;
 }
 /**********/
 
@@ -125,12 +131,14 @@ form.addSongs input{
 /* ***** */
 
 .mainContent{
-  /* height: 70vh; */
+  height: 240px;
+  overflow-y: scroll;
   width: auto;
+  padding:15px;
   /* margin: 0 auto; */
-  margin-top: 120px;
+  margin-top: 110px;
   display: grid;
-  row-gap: 20px;
+  row-gap: 32px;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
   
 }
@@ -149,6 +157,26 @@ form.addSongs input{
 .audioContainer{
 
 }
+
+.activeImage.albumWrapper{
+  opacity: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.pause{
+  position: relative;
+  top:47%;
+}
+
+.activePlaylistBtns{
+  display: grid;
+}
+
+.activePlaylistDelete, .activePlaylistUpdate{
+  cursor: pointer;
+}
+
 /*
 ** Album Playlists
 */

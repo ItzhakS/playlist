@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js" integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" crossorigin="anonymous"></script>
     <script src="script/main.js"></script>
+    <script src="script/clickFunctions.js"></script>
     <script src="plugins/jquery.arctext.js"></script>
     <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.2.0/css/all.css" integrity="sha384-hWVjflwFxL6sNzntih27bfxkr27PmbbK/iSvJ+a4+0owXq79v+lsFkW54bOGbiDQ" crossorigin="anonymous">
@@ -61,12 +62,16 @@
       </div>
     </div>
     <div class="activePlaylistWrapper">
-      <div class="activeImage albumWrapper"></div>
+      <div class="activeImage albumWrapper" onclick="pauseNow()"><i class="fas fa-pause pause"></i></div>
       <div class="audioContainer">
         <audio controls>
           <source src="" type="">
         </audio>
         <div class="songList"></div>
+      </div>
+      <div class="activePlaylistBtns">
+        <i class="fas fa-times activePlaylistDelete"></i>
+        <i class="fas fa-pencil-alt activePlaylistUpdate"></i>
       </div>
     </div>
     <div class="mainContent">
