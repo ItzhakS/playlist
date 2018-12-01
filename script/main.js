@@ -296,42 +296,43 @@ $(function() {
     $('.activePlaylistBtns').attr('id', e.currentTarget.parentElement.id );
     // $('audio').empty();
     let audio = $('audio').attr('preload','auto');
+    let nowPlaying =  $('.nowPlayingName');
     
     $.get(`api/playlist/${e.currentTarget.parentElement.id}/songs`)
       .done((response)=>{
         let counter = 1;
         songs = response.data.songs;
-        
-        // songs.forEach((song)=>{
-          //   let source = document.createElement('source');
-          //   let src = document.createAttribute('src');
-          //   src.value = `${song.url}`;
-          //   source.setAttributeNode(src);
-          //   audio.append(source)
-          // })
         $('source').attr("src", songs[0].url);
         audio[0].pause();
         audio[0].load();
         audio[0].oncanplaythrough = audio[0].play();
+        nowPlaying.empty().append(`${songs[0].name}`);
+
+    //  Audio Ended Even handling
         audio[0].addEventListener('ended', () => {
           console.log('endede!');
           console.log(counter == songs.length);
           if(counter == songs.length){
             audio[0].firstElementChild.src = songs[0].url;
+            console.log(songs[0]);
+            $('.nowPlayingName').innerText = songs[0].name;
             let playBtn = $('.fa-play');
             playBtn.hide();
-            $(`span.song0`).append('<i class="fa fa-play fa-1"></i>');
+            $(`span.song0`).append('<i class="fa fa-play fa-1 listPlay"></i>');
             audio[0].load();
             audio[0].oncanplaythrough = audio[0].play();
+            $('.activeImage').append('<i class="fas fa-pause pause"></i>');
+            nowPlaying.empty().append(`${songs[0].name}`);
           } else {
-            audio[0].firstElementChild.src = songs[counter].url;
-            let playBtn = $('.fa-play');
-            playBtn.hide();
-            $(`span.song${counter}`).append('<i class="fa fa-play fa-1"></i>');
-            audio[0].load();
-            audio[0].oncanplaythrough = audio[0].play();
-            counter++;
-            console.log(counter);
+              nowPlaying.empty().append(`${songs[counter].name}`);
+              audio[0].firstElementChild.src = songs[counter].url;
+              let playBtn = $('.fa-play');
+              playBtn.hide();
+              $(`span.song${counter}`).append('<i class="fa fa-play fa-1"></i>');
+              audio[0].load();
+              audio[0].oncanplaythrough = audio[0].play();
+              $('.activeImage').append('<i class="fas fa-pause pause"></i>');
+              counter++;
           }
         })
         songs.forEach(function(song, i) {

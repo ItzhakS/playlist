@@ -62,11 +62,14 @@
       </div>
     </div>
     <div class="activePlaylistWrapper">
-      <div class="activeImage albumWrapper" onclick="pauseNow()"><i class="fas fa-pause pause"></i></div>
+      <div class="activeImage albumWrapper" onclick="pausePlay()"><i class="fas fa-pause pause"></i></div>
       <div class="audioContainer">
-        <audio controls>
+        <audio controls onplay="playEvent()" onpause="pauseEvent()">
           <source src="" type="">
         </audio>
+        <div class="nowPlaying">
+          <h5 class="nowPlayingH">Now Playing: <span class="nowPlayingName"></span></h5>
+        </div>
         <div class="songList"></div>
       </div>
       <div class="activePlaylistBtns">

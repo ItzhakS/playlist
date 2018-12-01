@@ -169,12 +169,25 @@ form.addSongs input{
   top:47%;
 }
 
+.activePlay{
+  position: relative;
+  top:47%;
+}
+
 .activePlaylistBtns{
   display: grid;
 }
 
 .activePlaylistDelete, .activePlaylistUpdate{
   cursor: pointer;
+}
+
+.nowPlayingH{
+  margin-top: 0;
+}
+
+.listPlay + span{
+  opacity: 1;
 }
 
 /*
@@ -235,4 +248,5 @@ ol li{
 
 span.songName{
   margin-left: 10px;
+  opacity: .85;
 }
